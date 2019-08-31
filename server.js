@@ -42,17 +42,36 @@ app.use((err, req, res, next) => {
     .send(errMessage)
 })
 
-app.use("/api/exercise/new-user", user);
+app.use("/api/exercise", user);
 app.use("/api/exercise/add", exercise);
 
 app.get("/api/exercise/log",async(req,res)=>{
  try {
   let {userId,from,to,limit} = req.query;
-  from = Date.parse(from);
-  to = Date.parse(to);
-  limit = Number(limit);
-  await exercise.find({userId,date: {$gt: from, $lt: to}}).limit(limit);
-  res.json(exercise);
+
+  if(userId === undefined ){
+    return res.send('no userid');
+  }else {
+    let query = {};
+    query.userId = userId ;
+    if(from !== undefined){
+      from = new Date(from);
+      query.date = { $gte:from}
+    }
+    if(to !== undefined){
+      to = new Date(to);
+      query.date = { $lt : from}
+    }
+    if(limit !== undefined){
+      limit = Number(limit);
+    }
+    console.log(query);
+     const exe = await Exercise.find(query).limit(limit);
+
+     res.send(exe);
+    
+    
+  }
  } catch (error) {
    console.log(error);
    

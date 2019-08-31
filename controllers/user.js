@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 
-router.post("/", async (req, res) => {
+router.post("/new-user", async (req, res) => {
   const checkUser = await User.find({username: req.body.username});
   if(checkUser) return res.send("username already exists");
   
@@ -14,5 +14,11 @@ router.post("/", async (req, res) => {
   await user.save();
   res.send(user);
 });
+
+router.get("/users",async(req,res)=>{
+  const users = await User.find();
+  res.send(users);
+});
+
 
 module.exports = router;
